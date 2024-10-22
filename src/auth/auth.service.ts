@@ -27,6 +27,25 @@ export class AuthService {
 			...tokens
 		}
 	}
+	async login(dto: AuthDto) {
+		const user = await this.validateUser(dto)
+		const tokens = this.issueTokens(user.id)
+		return {
+			user,
+			...tokens
+		}
+	}
+	async getNewTokens(refreshToken: string) {
+		const result = await this.jwt.verify(refreshToken)
+		if (!result)
+			throw new UnauthorizedException('Не валидный refresh token токен')
+		const user = await this.userService.getById(result.id)
+		const tokens = this.issueTokens(user.id)
+		return {
+			user,
+			...tokens
+		}
+	}
 	private issueTokens(userId: string) {
 		const data = { id: userId }
 		const accesToken = this.jwt.sign(data, {
