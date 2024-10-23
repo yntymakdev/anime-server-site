@@ -1,6 +1,7 @@
 import {
 	Body,
 	Controller,
+	Delete,
 	Get,
 	HttpCode,
 	NotFoundException,
@@ -60,5 +61,16 @@ export class UserController {
 				'К сожалению пользователь не найден, быть может вы имели виду другое название ?'
 			)
 		return updatedUser
+	}
+
+	@Delete(':id')
+	@Auth('admin')
+	async delete(@Param('id') id: string) {
+		const deletedUser = await this.userService.delete(id)
+		if (!deletedUser)
+			throw new NotFoundException(
+				'К сожалению пользователь не найден, быть может вы имели виду другое название ?'
+			)
+		return deletedUser
 	}
 }
