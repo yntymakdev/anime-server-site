@@ -1,10 +1,15 @@
-import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator'
+import { UserRole } from '@prisma/client'
+import {
+	IsEmail,
+	IsEnum,
+	IsOptional,
+	IsString,
+	MinLength
+} from 'class-validator'
 
-export class AuthDto {
-	@IsOptional()
+export class UpdateUserDto {
 	@IsString()
 	name: string
-	@IsString()
 	@IsEmail()
 	email: string
 	@MinLength(6, {
@@ -12,4 +17,7 @@ export class AuthDto {
 	})
 	@IsString()
 	password: string
+
+	@IsEnum(UserRole)
+	role: UserRole
 }
