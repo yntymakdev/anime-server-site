@@ -7,17 +7,17 @@ import {
 	MinLength
 } from 'class-validator'
 
-export class UpdateUserDto {
+export class UpdateGenreDto {
 	@IsString()
 	name: string
-	@IsEmail()
-	email: string
+	@IsString()
+	description: string
 	// @MinLength(6, {
 	// 	message: 'Пароль должен содержать не менее 6 символов(правило от YNTY)'
 	// })
 	// @IsString()
 	// password: string
 
-	@IsEnum(UserRole)
-	role: UserRole
+	@IsString()
+	icon: string
 }
