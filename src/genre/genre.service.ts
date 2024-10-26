@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from 'src/prisma.service'
-import { returnGenreObject } from './return-genre.dto'
+import { returnGenreObject } from './return-genre.obj'
 import { UpdateGenreDto } from './dto/update-genre.dto'
 import { generateSlug } from 'src/utils/generate-slug'
 import { stringify } from 'querystring'

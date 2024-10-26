@@ -80,7 +80,7 @@ model Review{
 
   user User? @relation(fields: [userId], references: [id])
   userId String? @map("user_id")
-  Movie Movie? @relation(fields: [movieId] , references: [id])
+  movie Movie? @relation(fields: [movieId] , references: [id])
   movieId String? @map("movie_id")
   @@map("review")
 
