@@ -1,4 +1,4 @@
-import { IsArray, isArray, IsString } from 'class-validator'
+import { IsArray, isArray, isNumber, IsNumber, IsString } from 'class-validator'
 
 export class UpdateMovieDto {
 	@IsString()
@@ -12,11 +12,13 @@ export class UpdateMovieDto {
 	videoUrl: string
 	@IsString()
 	country: string
-	@IsString()
-	year: string
-	@IsString()
-	duration: string
+	@IsNumber()
+	year: number
+	@IsNumber()
+	duration: number
 	@IsArray()
+	@IsString({ each: true })
+	genres: string[]
 	@IsString({ each: true })
 	actors: string[]
 }
