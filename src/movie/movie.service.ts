@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from 'src/prisma.service'
-import { returnMovieObject } from './return-movie.obj'
 import { UpdateMovieDto } from './dto/update-movie.dto'
 import { generateSlug } from 'src/utils/generate-slug'
 import { stringify } from 'querystring'
 import { connect } from 'http2'
+import { GenreService } from 'src/genre/genre.service'
+import { returnMovieObject } from './return-movie.objects'
 
 @Injectable()
 export class MovieService {
@@ -128,7 +129,25 @@ export class MovieService {
 			},
 			data: {
 				title: dto.title,
-				slug: generateSlug(dto.title)
+				slug: generateSlug(dto.title),
+				poster: dto.poster,
+				bigPoster: dto.bigPoster,
+				videoUrl: dto.videoUrl,
+				country: dto.country,
+				year: dto.year,
+				duration: dto.duration,
+				genres: {
+					set: dto.genres?.map(genreId => ({ id: genreId })),
+					disconnect: dto.genres
+						?.filter(genreId => !dto.genres.includes(genreId))
+						.map(genreId => ({ id: genreId }))
+				},
+				actors: {
+					set: dto.actors?.map(actorId => ({ id: actorId })),
+					disconnect: dto.actors
+						?.filter(actorId => !dto.actors.includes(actorId))
+						.map(actorId => ({ id: actorId }))
+				}
 			}
 		})
 	}
