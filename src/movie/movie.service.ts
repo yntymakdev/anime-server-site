@@ -65,12 +65,14 @@ export class MovieService {
 			}
 		})
 	}
-	async getByGenres(genresId: string) {
+	async getByGenres(genreIds: string[]) {
 		return this.prisma.movie.findMany({
 			where: {
 				actors: {
 					some: {
-						id: genresId
+						id: {
+							in: genreIds
+						}
 					}
 				}
 			}
