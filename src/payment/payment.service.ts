@@ -7,7 +7,7 @@ import { PaymentDto } from './dto/payment.dto'
 import { AuthModuleOptions } from '@nestjs/passport'
 import { config } from 'process'
 const yooKassa = new YooKassa({
-	shopId: process.env.env['SHOP_ID'],
+	shopId: process.env['SHOP_ID'],
 	secretKey: process.env['PAYMENT_TOKEN']
 })
 @Injectable()
@@ -36,15 +36,15 @@ export class PaymentService {
 		})
 
 		const payment = await yooKassa.createPayment({
-			amount: { value: dto.amount.toFixed(2), currency: 'KGS' },
+			amount: { value: dto.amount.toFixed(2), currency: 'RUB' },
 			payment_method_data: {
-				type: 'back_card'
+				type: 'bank_card'
 			},
 			confirmation: {
 				type: 'redirect',
 				return_url: `${process.env['APP_URL']}/thanks`
 			},
-			description: `Покупка платной подписки на премиум в Yume | Stories. Id платежа #${order.id}, Id пользователя  #${order.userId}`
+			description: `Покупка премиум на Yume|Stories. Id платежа #${order.id}, Id пользователя  #${order.userId}`
 		})
 		return payment
 	}
