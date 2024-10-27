@@ -1,11 +1,13 @@
 import { ConflictException, Injectable } from '@nestjs/common'
-import { Prisma } from '@prisma/client'
+import { PaymentStatus, Prisma } from '@prisma/client'
 import { PrismaService } from 'src/prisma.service'
 import { UserService } from 'src/user/user.service'
 import * as YooKassa from 'yookassa'
 import { PaymentDto } from './dto/payment.dto'
 import { AuthModuleOptions } from '@nestjs/passport'
 import { config } from 'process'
+import { PaymentStatusDto } from './dto/payment-status.dto'
+import { returnPaymentObject } from './return-payment.object'
 const yooKassa = new YooKassa({
 	shopId: process.env['SHOP_ID'],
 	secretKey: process.env['PAYMENT_TOKEN']
@@ -46,6 +48,55 @@ export class PaymentService {
 			},
 			description: `Покупка премиум на Yume|Stories. Id платежа #${order.id}, Id пользователя  #${order.userId}`
 		})
+
 		return payment
+	}
+
+	async updateStatus(dto: PaymentStatusDto) {
+		if (dto.event === 'payment.waiting_for_capture') {
+			const payment = await yooKassa.capturePayment(dto.object.id)
+
+			return payment
+		}
+		if (dto.event === 'payment.succeeded') {
+			const descriptionParts = dto.object.description.split(', ')
+			const orderId = descriptionParts[0].split('#')[1]
+			const userId = descriptionParts[1].split('#')[1]
+
+			await this.prisma.payment.update({
+				where: {
+					id: orderId
+				},
+				data: {
+					status: PaymentStatus.PAYED
+				}
+			})
+			await this.prisma.user.update({
+				where: {
+					id: userId
+				},
+				data: {
+					isHasPremium: true
+				}
+			})
+			return true
+		}
+		return true
+	}
+
+	// ?Query for Admin
+
+	async getAll() {
+		return this.prisma.payment.findMany({
+			orderBy: {
+				createdAt: 'desc'
+			},
+			select: returnPaymentObject
+		})
+	}
+	async delete(id: string) {
+		return this.prisma.payment.delete({
+			where: { id }
+		})
 	}
 }
